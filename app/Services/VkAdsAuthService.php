@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\RedisCacheService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -20,13 +19,10 @@ class VkAdsAuthService
 
     protected ?int $expiresAt = null;
 
-    protected RedisCacheService $cacheService;
-
-    public function __construct(RedisCacheService $cacheService)
+    public function __construct()
     {
         $this->clientId = config('services.vk_ads.client_id');
         $this->clientSecret = config('services.vk_ads.client_secret');
-        $this->cacheService = $cacheService;
         $this->loadToken();
     }
 
@@ -144,7 +140,7 @@ class VkAdsAuthService
      */
     protected function loadToken(): void
     {
-        $tokenData = $this->cacheService->get('vk_ads_token');
+        $tokenData = cache()->get('vk_ads_token');
 
         if ($tokenData) {
             $this->accessToken = $tokenData['access_token'];
